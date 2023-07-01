@@ -3,19 +3,21 @@ package main
 import (
 	"log"
 
+	"boilerplate/apperror"
 	"boilerplate/route"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
-	app := fiber.New()
+	fiberConfig := fiber.Config{ErrorHandler: apperror.CustomFiberErrorHandler}
+	// New app
+	app := fiber.New(fiberConfig)
+	// Recover from panic
+	app.Use(recover.New())
 	// Initialize routes
 	route.InitRoutes(app)
 	// Start the server
-	err := app.Listen(":3000")
-	// Check for Error
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Fatal(app.Listen(":3000"))
 }
