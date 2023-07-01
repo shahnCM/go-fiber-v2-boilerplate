@@ -9,11 +9,13 @@ import (
 )
 
 func main() {
+	// Configs
 	fiberConfig := fiber.Config{ErrorHandler: errorhandler.CustomFiberErrorHandler}
+	recoverConfig := recover.Config{EnableStackTrace: true}
 	// New app
 	app := fiber.New(fiberConfig)
 	// Recover from any panic
-	app.Use(recover.New())
+	app.Use(recover.New(recoverConfig))
 	// Initialize api route
 	route.InitApiRoutes(app)
 	// Start the server

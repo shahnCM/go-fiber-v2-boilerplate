@@ -5,29 +5,6 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-func ParseRequest(ctx *fiber.Ctx, input interface{}) error {
-	if err := ctx.BodyParser(input); err != nil {
-		return fiber.ErrInternalServerError
-	}
-	return nil
-}
-
-func ValidateRequest(input interface{}) *[]ValidationErrorElement {
-	var validate = validator.New()
-	var errors []ValidationErrorElement
-	err := validate.Struct(input)
-	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			var element ValidationErrorElement
-			element.FailedField = err.StructNamespace()
-			element.Tag = err.Tag()
-			element.Value = err.Param()
-			errors = append(errors, element)
-		}
-	}
-	return &errors
-}
-
 type SuccessResponseBody struct {
 	Status     string      `json:"status"`
 	StatusCode int         `json:"status_code"`
@@ -76,4 +53,27 @@ func ValidationErrorResponse(ctx *fiber.Ctx, validationErrorElements *[]Validati
 		},
 		ValidationErrors: *validationErrorElements,
 	})
+}
+
+func ParseRequest(ctx *fiber.Ctx, input interface{}) error {
+	if err := ctx.BodyParser(input); err != nil {
+		return fiber.ErrInternalServerError
+	}
+	return nil
+}
+
+func ValidateRequest(input interface{}) *[]ValidationErrorElement {
+	var validate = validator.New()
+	var errors []ValidationErrorElement
+	err := validate.Struct(input)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var element ValidationErrorElement
+			element.FailedField = err.StructNamespace()
+			element.Tag = err.Tag()
+			element.Value = err.Param()
+			errors = append(errors, element)
+		}
+	}
+	return &errors
 }
