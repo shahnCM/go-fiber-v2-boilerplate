@@ -1,8 +1,9 @@
 package helper
 
 import (
+	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 type SuccessResponseBody struct {
@@ -23,6 +24,7 @@ type ValidationErrorResponseBody struct {
 }
 
 type ValidationErrorElement struct {
+	Msg         string `json:"msg"`
 	FailedField string `json:"failed_field"`
 	Tag         string `json:"tag"`
 	Value       string `json:"value"`
@@ -69,7 +71,12 @@ func ValidateRequest(input interface{}) *[]ValidationErrorElement {
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			var element ValidationErrorElement
-			element.FailedField = err.StructNamespace()
+			value := err.Param()
+			if value == "" {
+				value = "missing or invalid"
+			}
+			element.Msg = fmt.Sprintf("%s, %s: %s", err.Field(), err.Tag(), value)
+			element.FailedField = err.Field()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
 			errors = append(errors, element)
