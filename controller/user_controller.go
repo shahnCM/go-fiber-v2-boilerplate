@@ -15,8 +15,8 @@ func StoreUser(ctx *fiber.Ctx) error {
 	}
 
 	if validationErrors := apphelper.ValidateRequest(*user); validationErrors != nil {
-		return ctx.Status(422).JSON(apphelper.ValidationErrorResponse(validationErrors))
+		return apphelper.ValidationErrorResponse(ctx, validationErrors)
 	}
 
-	return ctx.Status(200).JSON(apphelper.SuccessResponse(user, 200))
+	return apphelper.SuccessResponse(ctx, user, 200)
 }

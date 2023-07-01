@@ -13,11 +13,11 @@ func Home(ctx *fiber.Ctx) error {
 		"msg": message,
 	}
 
-	return ctx.Status(200).JSON(apphelper.SuccessResponse(data, 200))
+	return apphelper.SuccessResponse(ctx, data, 200)
 }
 
 func NullResponse(ctx *fiber.Ctx) error {
-	return ctx.Status(200).JSON(apphelper.SuccessResponse(nil, 201))
+	return apphelper.SuccessResponse(ctx, nil, 201)
 }
 
 func SimplePanic(ctx *fiber.Ctx) error {

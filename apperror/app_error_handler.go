@@ -21,10 +21,5 @@ func CustomFiberErrorHandler(ctx *fiber.Ctx, err error) error {
 		message = e.Message
 	}
 
-	response := apphelper.ErrorResponse(code, message)
-
-	return ctx.Status(response.StatusCode).JSON(response)
-
-	// In case the SendFile fails
-	// return ctx.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
+	return apphelper.ErrorResponse(ctx, code, message)
 }

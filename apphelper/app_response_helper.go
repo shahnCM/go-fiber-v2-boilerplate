@@ -1,5 +1,7 @@
 package apphelper
 
+import "github.com/gofiber/fiber/v2"
+
 type SuccessResponseBody struct {
 	Status     string      `json:"status"`
 	StatusCode int         `json:"status_code"`
@@ -23,29 +25,29 @@ type ValidationError struct {
 	Value       string `json:"value"`
 }
 
-func SuccessResponse(data interface{}, code int) SuccessResponseBody {
-	return SuccessResponseBody{
+func SuccessResponse(ctx *fiber.Ctx, data interface{}, code int) error {
+	return ctx.Status(code).JSON(SuccessResponseBody{
 		Status:     "Success",
 		StatusCode: code,
 		Data:       data,
-	}
+	})
 }
 
-func ErrorResponse(code int, message string) ErrorResponseBody {
-	return ErrorResponseBody{
+func ErrorResponse(ctx *fiber.Ctx, code int, message string) error {
+	return ctx.Status(code).JSON(ErrorResponseBody{
 		Status:       "Error",
 		StatusCode:   code,
 		ErrorMessage: message,
-	}
+	})
 }
 
-func ValidationErrorResponse(validationErrors []ValidationError) ValidationErrorResponseBody {
-	return ValidationErrorResponseBody{
+func ValidationErrorResponse(ctx *fiber.Ctx, validationErrors []ValidationError) error {
+	return ctx.Status(422).JSON(ValidationErrorResponseBody{
 		ErrorResponseBody: ErrorResponseBody{
 			Status:       "Error",
 			StatusCode:   422,
 			ErrorMessage: "Validation Error",
 		},
 		ValidationErrors: validationErrors,
-	}
+	})
 }
