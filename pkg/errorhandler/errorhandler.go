@@ -1,10 +1,8 @@
-package apperror
+package errorhandler
 
 import (
+	"boilerplate/pkg/helper"
 	"errors"
-
-	"boilerplate/apphelper"
-
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -21,5 +19,5 @@ func CustomFiberErrorHandler(ctx *fiber.Ctx, err error) error {
 		message = e.Message
 	}
 
-	return apphelper.ErrorResponse(ctx, code, message)
+	return helper.ErrorResponse(ctx, code, message)
 }

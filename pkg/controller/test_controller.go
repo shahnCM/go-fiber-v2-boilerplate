@@ -1,9 +1,8 @@
 package controller
 
 import (
-	"boilerplate/apphelper"
-	"boilerplate/service"
-
+	"boilerplate/pkg/helper"
+	"boilerplate/pkg/service"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,11 +12,11 @@ func Home(ctx *fiber.Ctx) error {
 		"msg": message,
 	}
 
-	return apphelper.SuccessResponse(ctx, data, 200)
+	return helper.SuccessResponse(ctx, data, 200)
 }
 
 func NullResponse(ctx *fiber.Ctx) error {
-	return apphelper.SuccessResponse(ctx, nil, 201)
+	return helper.SuccessResponse(ctx, nil, 201)
 }
 
 func SimplePanic(ctx *fiber.Ctx) error {

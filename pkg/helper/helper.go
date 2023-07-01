@@ -1,6 +1,32 @@
-package apphelper
+package helper
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"gopkg.in/go-playground/validator.v9"
+)
+
+func ParseRequest(ctx *fiber.Ctx, input interface{}) error {
+	if err := ctx.BodyParser(input); err != nil {
+		return fiber.ErrInternalServerError
+	}
+	return nil
+}
+
+func ValidateRequest(input interface{}) *[]ValidationErrorElement {
+	var validate = validator.New()
+	var errors []ValidationErrorElement
+	err := validate.Struct(input)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var element ValidationErrorElement
+			element.FailedField = err.StructNamespace()
+			element.Tag = err.Tag()
+			element.Value = err.Param()
+			errors = append(errors, element)
+		}
+	}
+	return &errors
+}
 
 type SuccessResponseBody struct {
 	Status     string      `json:"status"`
@@ -16,10 +42,10 @@ type ErrorResponseBody struct {
 
 type ValidationErrorResponseBody struct {
 	ErrorResponseBody
-	ValidationErrors []ValidationError `json:"validation_errors"`
+	ValidationErrors []ValidationErrorElement `json:"validation_errors"`
 }
 
-type ValidationError struct {
+type ValidationErrorElement struct {
 	FailedField string `json:"failed_field"`
 	Tag         string `json:"tag"`
 	Value       string `json:"value"`
@@ -41,13 +67,13 @@ func ErrorResponse(ctx *fiber.Ctx, code int, message string) error {
 	})
 }
 
-func ValidationErrorResponse(ctx *fiber.Ctx, validationErrors *[]ValidationError) error {
+func ValidationErrorResponse(ctx *fiber.Ctx, validationErrorElements *[]ValidationErrorElement) error {
 	return ctx.Status(422).JSON(ValidationErrorResponseBody{
 		ErrorResponseBody: ErrorResponseBody{
 			Status:       "Error",
 			StatusCode:   422,
 			ErrorMessage: "Validation Error",
 		},
-		ValidationErrors: *validationErrors,
+		ValidationErrors: *validationErrorElements,
 	})
 }

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"boilerplate/repository"
+	"boilerplate/pkg/repository"
 )
 
 func GetHomeMessage() string {
