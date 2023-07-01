@@ -41,13 +41,13 @@ func ErrorResponse(ctx *fiber.Ctx, code int, message string) error {
 	})
 }
 
-func ValidationErrorResponse(ctx *fiber.Ctx, validationErrors []ValidationError) error {
+func ValidationErrorResponse(ctx *fiber.Ctx, validationErrors *[]ValidationError) error {
 	return ctx.Status(422).JSON(ValidationErrorResponseBody{
 		ErrorResponseBody: ErrorResponseBody{
 			Status:       "Error",
 			StatusCode:   422,
 			ErrorMessage: "Validation Error",
 		},
-		ValidationErrors: validationErrors,
+		ValidationErrors: *validationErrors,
 	})
 }

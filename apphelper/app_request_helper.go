@@ -12,7 +12,7 @@ func ParseRequest(ctx *fiber.Ctx, input interface{}) error {
 	return nil
 }
 
-func ValidateRequest(input interface{}) []ValidationError {
+func ValidateRequest(input interface{}) *[]ValidationError {
 	var validate = validator.New()
 	var errors []ValidationError
 	err := validate.Struct(input)
@@ -25,5 +25,5 @@ func ValidateRequest(input interface{}) []ValidationError {
 			errors = append(errors, element)
 		}
 	}
-	return errors
+	return &errors
 }
