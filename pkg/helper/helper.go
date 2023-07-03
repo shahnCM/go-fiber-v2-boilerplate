@@ -20,7 +20,7 @@ type ErrorResponseBody struct {
 
 type ValidationErrorResponseBody struct {
 	ErrorResponseBody
-	ValidationErrors []ValidationErrorElement `json:"validation_errors"`
+	ValidationErrors []*ValidationErrorElement `json:"validation_errors"`
 }
 
 type ValidationErrorElement struct {
@@ -46,14 +46,14 @@ func ErrorResponse(ctx *fiber.Ctx, code int, message string) error {
 	})
 }
 
-func ValidationErrorResponse(ctx *fiber.Ctx, validationErrorElements *[]ValidationErrorElement) error {
+func ValidationErrorResponse(ctx *fiber.Ctx, validationErrorElements []*ValidationErrorElement) error {
 	return ctx.Status(422).JSON(ValidationErrorResponseBody{
 		ErrorResponseBody: ErrorResponseBody{
 			Status:       "Error",
 			StatusCode:   422,
 			ErrorMessage: "Validation Error",
 		},
-		ValidationErrors: *validationErrorElements,
+		ValidationErrors: validationErrorElements,
 	})
 }
 
@@ -64,9 +64,9 @@ func ParseRequest(ctx *fiber.Ctx, input interface{}) error {
 	return nil
 }
 
-func ValidateRequest(input interface{}) *[]ValidationErrorElement {
+func ValidateRequest(input interface{}) []*ValidationErrorElement {
 	var validate = validator.New()
-	var errors []ValidationErrorElement
+	var errors []*ValidationErrorElement
 	err := validate.Struct(input)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
@@ -79,8 +79,8 @@ func ValidateRequest(input interface{}) *[]ValidationErrorElement {
 			element.FailedField = err.Field()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
-			errors = append(errors, element)
+			errors = append(errors, &element)
 		}
 	}
-	return &errors
+	return errors
 }
