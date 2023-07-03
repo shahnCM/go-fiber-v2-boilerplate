@@ -75,7 +75,7 @@ func ValidateRequest(input interface{}) []*ValidationErrorElement {
 			if value == "" {
 				value = "missing or invalid"
 			}
-			element.Msg = fmt.Sprintf("%s, %s: %s", err.Field(), err.Tag(), value)
+			element.Msg = fmt.Sprintf(`%s, %s: %s`, err.Field(), err.Tag(), value)
 			element.FailedField = err.Field()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
